@@ -44,15 +44,15 @@ public:
         size_t update = 1;
         NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
                            << after << "(update = " << update << ")";
-        while (after < before)
-        {
-            before = after;
-            ReduceFusion();
-            after = m_graph->get_memory_io();
-            update += 1;
-            NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
-                               << after << "(update = " << update << ")";
-        }
+        // while (after < before)
+        // {
+        //     before = after;
+        //     ReduceFusion();
+        //     after = m_graph->get_memory_io();
+        //     update += 1;
+        //     NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
+        //                        << after << "(update = " << update << ")";
+        // }
 
         return true;
     }
@@ -104,6 +104,7 @@ private:
         if (src->get_in_edges().size() == 0 || dst->get_op_ptr()->is_output())
             return false;
 
+        return true;
         auto src_sm = src->get_op_ptr()->get_shared_memory();
         auto dst_sm = dst->get_op_ptr()->get_shared_memory();
         if (src_sm.empty() || dst_sm.empty())
