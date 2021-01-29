@@ -80,14 +80,14 @@ std::string retarget_expr_mediates(std::string expr,
 void Fused::register_ir2(std::vector<std::shared_ptr<graph::GNode>>& gnodes)
 {
     // DEBUG: Preprint the IR list of all gnodes
-    // NNFUSION_LOG(INFO) << "Fusion IR list";
-    // for (auto& m_node : gnodes)
-    // {
-    //     auto& configs = get_op_configs();
-    //     auto it = configs.find(m_node->get_op_ptr()->get_op_type());
-    //     NNFUSION_CHECK(it->second.f_translate_v2) << m_node->get_op_type();
-    //     NNFUSION_LOG(INFO) << it->second.f_translate_v2(m_node);
-    // }
+    NNFUSION_LOG(INFO) << "Fusion IR list";
+    for (auto& m_node : gnodes)
+    {
+        auto& configs = get_op_configs();
+        auto it = configs.find(m_node->get_op_ptr()->get_op_type());
+        NNFUSION_CHECK(it->second.f_translate_v2) << m_node->get_op_type();
+        NNFUSION_LOG(INFO) << it->second.f_translate_v2(m_node);
+    }
 
     std::unordered_map<std::shared_ptr<graph::GNode>, std::vector<std::string>> outputs_info_dict;
     std::unordered_map<std::shared_ptr<graph::GNode>, std::vector<std::string>> inputs_info_dict;

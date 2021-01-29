@@ -114,7 +114,7 @@ private:
         auto trr = total_reduce_range(group_reduce_range);
         auto new_reduce_range = compute_reduce_range(group_reduce_range, dst_sm);
         auto new_trr = total_reduce_range(new_reduce_range);
-        if (trr != new_trr && new_trr > FLAGS_freduce_range)
+        if (trr != new_trr /*&& new_trr > FLAGS_freduce_range*/)
             return false;
 
         if (DFS(src, 0, dst))

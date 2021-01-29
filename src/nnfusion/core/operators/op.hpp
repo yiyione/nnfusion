@@ -143,7 +143,7 @@ namespace nnfusion
             std::string m_name;
             const std::string m_unique_name;
             static std::atomic<size_t> m_next_instance_id;
-            std::vector<size_t> m_shared_memory; // for reduce fusion
+            std::vector<size_t> m_shared_memory{1}; // for reduce fusion
 
         private:
             std::shared_ptr<Annotations> m_op_annotations;
