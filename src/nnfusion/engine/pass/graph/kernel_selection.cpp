@@ -232,8 +232,8 @@ pair<NNFusion_DeviceType, kernels::KernelEmitter::Pointer>
 
 bool DefaultKernelSelector::run_on_graph(std::shared_ptr<nnfusion::graph::Graph>& graph)
 {
-    // std::vector<std::shared_ptr<GNode>> nodes = graph->get_ordered_ops();
-    std::vector<std::shared_ptr<GNode>> nodes = graph->get_nodes();
+    std::vector<std::shared_ptr<GNode>> nodes = graph->get_ordered_ops();
+    // std::vector<std::shared_ptr<GNode>> nodes = graph->get_nodes();
     for (auto it : nodes)
     {
         if (!(*it)["Kernel_Selection_Result"].is_valid())

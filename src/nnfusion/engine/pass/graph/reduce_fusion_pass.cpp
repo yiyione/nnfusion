@@ -44,15 +44,15 @@ public:
         size_t update = 1;
         NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
                            << after << "(update = " << update << ")";
-        // while (after < before)
-        // {
-        //     before = after;
-        //     ReduceFusion();
-        //     after = m_graph->get_memory_io();
-        //     update += 1;
-        //     NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
-        //                        << after << "(update = " << update << ")";
-        // }
+        while (after < before)
+        {
+            before = after;
+            ReduceFusion();
+            after = m_graph->get_memory_io();
+            update += 1;
+            NNFUSION_LOG(INFO) << "[memory io] before vs after reduce fusion: " << before << " vs "
+                               << after << "(update = " << update << ")";
+        }
 
         return true;
     }
