@@ -28,6 +28,19 @@ namespace nnfusion
                 std::string backend;
                 bool fast_debug;
             };
+
+            class RuntimeConstantFoldingThreadPool
+            {
+            public:
+                void init_thread();
+                void add_job(std::function<void()> new_job);
+                void stop();
+
+            private:
+                std::vector<std::thread> pool;
+                std::mutex queue_mutex;
+                std::queue<std::function<void()>> job_queue;
+            }
         } // namespace pass
     }     // namespace graph
 } // namespace nnfusion

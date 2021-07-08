@@ -259,3 +259,88 @@ bool RuntimeConstantFoldingPass::run_on_graph(std::shared_ptr<Graph>& graph)
     NNFUSION_LOG(INFO) << "";
     return true;
 }
+
+void RuntimeConstantFoldingPass::runtime_const_folding_get_const_nodes(
+    std::shared_ptr<Graph>& graph,
+    std::set<std::shared_ptr<GNode>>& blocklist_nodes,
+    std::map<std::shared_ptr<GNode>, int>& in_degree,
+    std::map<std::shared_ptr<GNode>, int>& out_degree,
+    std::queue<std::shared_ptr<GNode>>& const_nodes)
+{
+    std::vector<std::shared_ptr<GNode>> nodes = graph->get_nodes();
+
+    // Find nodes with all constant upstream nodes
+    for (auto& it : nodes)
+    {
+        if (it->is_constant())
+        {
+            const_nodes.push(it);
+            for (auto& edge : it->get_out_edges())
+            {
+                if (edge->is_control_edge())
+                    continue;
+
+                NNFUSION_CHECK(edge->get_src() == it);
+                auto dst = edge->get_dst();
+                if (blocklist_nodes.count(dst))
+                    continue;
+                ++out_degree[it];
+                ++in_degree[dst];
+            }
+        }
+    }
+}
+
+bool RuntimeConstantFoldingPass::runtime_const_folding_job(std::shared_ptr<Graph>& graph)
+{
+
+}
+
+bool RuntimeConstantFoldingPass::run_on_graph_parallel(std::shared_ptr<Graph>& graph)
+{
+    int at = FLAGS_fconst_folding_backend.find(":DEBUG");
+    if (at >= 0)
+    {
+        this->backend = FLAGS_fconst_folding_backend.substr(0, at);
+        this->fast_debug = true;
+    }
+    else
+    {
+        this->backend = FLAGS_fconst_folding_backend;
+        this->fast_debug = false;
+    }
+
+    if (this->backend == "")
+        return true;
+
+    static bool has_warning = false;
+    if (!has_warning)
+    {
+        has_warning = true;
+    }
+
+    NNFUSION_LOG(INFO) << "Runtime Constant Folding Pass starts up for Graph: "
+                       << graph->get_name();
+
+    // Folding output nodes results in kernel_emitter crashes
+    std::set<std::shared_ptr<GNode>> blocklist_nodes = {};
+    for (auto& node : graph->get_outputs())
+        blocklist_nodes.insert(node);
+
+    std::map<std::shared_ptr<GNode>, int> in_degree = {};
+    std::map<std::shared_ptr<GNode>, int> out_degree = {};
+    std::queue<std::shared_ptr<GNode>> const_nodes = {};
+    runtime_const_folding_get_const_nodes(graph, blocklist_nodes, in_degree, out_degree);
+
+    while (true)
+    {
+
+    }
+
+    NNFUSION_LOG(INFO) << "";
+    NNFUSION_LOG(INFO) << ">> Runtime Constant Folding Pass ends for Graph: " << graph->get_name();
+    NNFUSION_LOG(INFO) << "";
+    return true;
+}
+
+void RuntimeConstantFoldingThreadPool::
